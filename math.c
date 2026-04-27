@@ -2,6 +2,7 @@
 #include  <errno.h>
 
 extern    int	errno;
+void execerror(char *s, char *t);
 double    errcheck();
 
 double  Log(double x)
