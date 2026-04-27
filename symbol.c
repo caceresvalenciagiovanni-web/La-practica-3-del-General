@@ -6,36 +6,37 @@
 void execerror(char *s, char *t);
 static Symbol *symlist = 0;    /* tabla de simbolos: lista ligada */
              //char s[]
-Symbol *lookup(char *s)    /* encontrar s en la tabla de símbolos */
+Symbol *lookup(char *s)
 {
-Symbol  *sp;
-	for (sp = symlist; sp != (Symbol *)0; sp = sp->next) 
-		if (strcmp(sp->name, s)== 0) 
-			return sp;
-	return 0; //NULL     /* 0 ==> no se encontró */ 
+    Symbol *sp;
+    for (sp = symlist; sp != (Symbol *)0; sp = sp->next) 
+        if (strcmp(sp->name, s) == 0) 
+            return sp;
+    return 0; 
 }
 
-Symbol *install(char *s, int t, double d) /* instalar s en la tabla de símbolos */
+Symbol *install(char *s, int t, Vector *v)
 {
-	Symbol *sp;
-	char *emalloc();
-	sp = (Symbol *) malloc(sizeof(Symbol));
-	sp->name = malloc(strlen(s)+ 1) ; /* +1 para '\0' */
-	strcpy(sp->name, s);
-	sp->type = t;
-	sp->u.val = d;
-	sp->next  =  symlist;   /*  poner al frente de la lista   */
-	symlist =  sp; 
-        return sp; 
+    Symbol *sp;
+    char *emalloc();
+
+    sp = (Symbol *) emalloc(sizeof(Symbol));
+    sp->name = emalloc(strlen(s) + 1); /* +1 para el carácter nulo '\0' */
+    strcpy(sp->name, s);
+    sp->type = t;
+    sp->u.vec = v;      /* CAMBIO CLAVE: Se almacena el puntero al vector */
+    sp->next = symlist; /* Se inserta al inicio de la lista ligada */
+    symlist = sp; 
+    return sp; 
 }
 
-char  *emalloc(unsigned n)
+char *emalloc(unsigned n)
 {
-	char *p;         
-	p = malloc(n); 
-	if(p == 0)
-		execerror("out of memory", (char  *)  0); 
-	return p; 
+    char *p;
+    p = malloc(n); 
+    if(p == 0)
+        execerror("out of memory", (char *) 0); 
+    return p; 
 }
 
 
