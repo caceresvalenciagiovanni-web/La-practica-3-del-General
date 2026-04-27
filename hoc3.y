@@ -83,20 +83,6 @@ expr:
     | expr '*' expr { $$ = multiVector($1, $3); }
     | expr 'X' expr { $$ = productoCruz($1, $3); }
     | expr '@' expr { $$ = productoPunto($1, $3); }
-    | NUMBER '*' expr {
-          /* Multiplicación de un escalar por un vector (por la izquierda). */
-          int i;
-          Vector *temp = creaVector($3->n);
-          for(i = 0; i < $3->n; i++) temp->vec[i] = $1;
-          $$ = multiVector(temp, $3);
-      }
-    | expr '*' NUMBER %prec '*' {
-          /* Multiplicación de un vector por un escalar (por la derecha). */
-          int i; 
-          Vector *temp = creaVector($1->n);
-          for(i = 0; i < $1->n; i++) temp->vec[i] = $3;
-          $$ = multiVector($1, temp);
-      }
     | '|' expr '|' {
           /* Cálculo de magnitud (retorna un escalar empaquetado en un vector 1D). */
           double mag = magnitudVector($2);
