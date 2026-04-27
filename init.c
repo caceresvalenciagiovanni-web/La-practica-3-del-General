@@ -4,16 +4,16 @@
 
 extern double   Log(), Log10(), Sqrt(), Exp( ) , integer ( ) ;
 
-static struct {         /* Constantes */ 
-char *name; 
-double cval;
+static struct {
+    char *name;
+    double cval;
 } consts[] = {
-"PI",    3.14159265358979323846,
-"E",     2.71828182845904523536,
-"GAMMA", 0.57721566490153286060,  /* Euler */
-"DEG",  57.29577951308232087680,  /* grado/radian */
-"PHI",   1.6180339887498948*820,  /* proporcion dorada */
-0,       0
+    "PI",    3.14159265358979323846,
+    "E",     2.71828182845904523536,
+    "GAMMA", 0.57721566490153286060,
+    "DEG",   57.29577951308232087680,
+    "PHI",   1.61803398874989484820,
+    0,       0
 };
 
 static struct {	/*	Predefinidos */
@@ -32,14 +32,28 @@ double	(*func)(double);
 0,	0
 };
 
-void init( ){  /* instalar constantes y predefinidos en la tabla */
-int i;
-Symbol *s;
+void init() {
+    int i;
+    Symbol *s;
+    Vector *v;
 
-for (i = 0; consts[i].name; i++)
-	install(consts[i].name, VAR, consts[i].cval);
-for (i = 0; builtins[i].name; i++) {
-	s = install(builtins[i].name, BLTIN, 0.0);
-	s->u.ptr = builtins[i].func;
+    /* Se instalan las constantes matemáticas en la tabla de símbolos */
+    for (i = 0; consts[i].name; i++) {
+        /* Se crea un vector de dimensión 1 para contener el valor escalar */
+        v = creaVector(1);
+        v->vec[0] = consts[i].cval;
+        
+        /* Se instala en la tabla como una variable (VAR) inicializada */
+        install(consts[i].name, VAR, v);
+    }
 }
-}
+
+
+
+
+
+
+
+
+
+
