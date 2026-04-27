@@ -32,7 +32,7 @@ double	(*func)(double);
 0,	0
 };
 
-init( ){  /* instalar constantes y predefinidos en la tabla */
+void init( ){  /* instalar constantes y predefinidos en la tabla */
 int i;
 Symbol *s;
 
