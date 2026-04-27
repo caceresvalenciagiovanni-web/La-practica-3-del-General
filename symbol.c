@@ -1,11 +1,19 @@
-#include  "hoc.h" 
-#include  "y.tab.h"
-#include  <string.h>      
-#include  <stdlib.h>
+#include <string.h>
+#include <stdlib.h>
+#include "hoc.h"
+#include "y.tab.h"
 
+/* Se declara la función de error para evitar advertencias de compilación */
 void execerror(char *s, char *t);
-static Symbol *symlist = 0;    /* tabla de simbolos: lista ligada */
-             //char s[]
+
+/* Tabla de símbolos: lista ligada de estructuras Symbol */
+static Symbol *symlist = 0;
+
+/**
+ * Busca un nombre en la tabla de símbolos.
+ * @param s Cadena de texto con el nombre a buscar.
+ * @return Puntero al símbolo encontrado o 0 si no existe.
+ */
 Symbol *lookup(char *s)
 {
     Symbol *sp;
@@ -15,6 +23,13 @@ Symbol *lookup(char *s)
     return 0; 
 }
 
+/**
+ * Instala un nuevo símbolo en la tabla.
+ * @param s Nombre del símbolo.
+ * @param t Tipo (VAR, BLTIN, INDEF).
+ * @param v Puntero al objeto Vector inicial.
+ * @return Puntero al símbolo recién creado e instalado.
+ */
 Symbol *install(char *s, int t, Vector *v)
 {
     Symbol *sp;
@@ -30,6 +45,11 @@ Symbol *install(char *s, int t, Vector *v)
     return sp; 
 }
 
+/**
+ * Envoltorio para malloc que verifica la disponibilidad de memoria.
+ * @param n Cantidad de bytes a reservar.
+ * @return Puntero a la memoria reservada.
+ */
 char *emalloc(unsigned n)
 {
     char *p;
@@ -38,7 +58,6 @@ char *emalloc(unsigned n)
         execerror("out of memory", (char *) 0); 
     return p; 
 }
-
 
 
 
