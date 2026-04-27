@@ -1,18 +1,21 @@
 #include  "hoc.h" 
 #include  "y.tab.h"
+#include  <string.h>      
+#include  <stdlib.h>
 
+void execerror(char *s, char *t);
 static Symbol *symlist = 0;    /* tabla de simbolos: lista ligada */
              //char s[]
-Symbol *lookup(char *s)    /* encontrar s en la tabla de símbolos */
+Symbol *lookup(char *s)    /* encontrar s en la tabla de sÃ­mbolos */
 {
 Symbol  *sp;
 	for (sp = symlist; sp != (Symbol *)0; sp = sp->next) 
 		if (strcmp(sp->name, s)== 0) 
 			return sp;
-	return 0; //NULL     /* 0 ==> no se encontró */ 
+	return 0; //NULL     /* 0 ==> no se encontrÃ³ */ 
 }
 
-Symbol *install(char *s, int t, double d) /* instalar s en la tabla de símbolos */
+Symbol *install(char *s, int t, double d) /* instalar s en la tabla de sÃ­mbolos */
 {
 	Symbol *sp;
 	char *emalloc();
@@ -26,11 +29,16 @@ Symbol *install(char *s, int t, double d) /* instalar s en la tabla de símbolos 
         return sp; 
 }
 
-char  *emalloc(unsigned n)	/*   revisar el regreso desde malloc  */
+char  *emalloc(unsigned n)
 {
-char *p,   *malloc();
+	char *p;         
 	p = malloc(n); 
 	if(p == 0)
 		execerror("out of memory", (char  *)  0); 
 	return p; 
 }
+
+
+
+
+
