@@ -16,10 +16,11 @@ typedef struct Symbol {
     struct Symbol   *next;          /* Puntero para la lista ligada de la tabla */
 } Symbol;
 
+/* Prototipos para la gestión de la tabla de símbolos */
 Symbol *install(char *s, int t, Vector *v); /* Se instala enviando un puntero Vector */
 Symbol *lookup(char *s);
 
-/* Prototipos de las operaciones vectoriales (migrados desde hoc1) */
+/* Prototipos de las operaciones vectoriales (migrados desde hoc1.y) */
 Vector *creaVector(int n); 
 double magnitudVector(Vector *v);
 void imprimeVector(Vector *a); 
@@ -29,4 +30,3 @@ Vector *restaVector(Vector *a, Vector *b);
 Vector *multiVector(Vector *a, Vector *b); 
 Vector *productoPunto(Vector *a, Vector *b);
 Vector *productoCruz(Vector *a, Vector *b);
-
