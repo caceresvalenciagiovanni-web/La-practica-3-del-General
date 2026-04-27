@@ -67,17 +67,35 @@ Vector *restaVector(Vector *a, Vector *b) {
     return c;
 }
 
-/* Se realiza el producto componente a componente (Hadamard) entre dos vectores. */
+/* Se realiza el producto componente a componente o multiplicación por escalar (Broadcasting). */
 Vector *multiVector(Vector *a, Vector *b) {
     Vector *c;
     int i;
-    if (a->n != b->n) execerror("Dimensiones incompatibles", "en multiplicacion");
     
-    c = creaVector(a->n);
-    for(i = 0; i < a->n; i++) c->vec[i] = a->vec[i] * b->vec[i];
-    return c;
+    /* Caso 1: Escalar * Vector (ej. 5 * [1 2 3]) */
+    if (a->n == 1 && b->n > 1) {
+        c = creaVector(b->n);
+        for(i = 0; i < b->n; i++) c->vec[i] = a->vec[0] * b->vec[i];
+        return c;
+    }
+    /* Caso 2: Vector * Escalar (ej. [1 2 3] * 5) */
+    else if (a->n > 1 && b->n == 1) {
+        c = creaVector(a->n);
+        for(i = 0; i < a->n; i++) c->vec[i] = a->vec[i] * b->vec[0];
+        return c;
+    }
+    /* Caso 3: Vector * Vector (componente a componente) */
+    else if (a->n == b->n) {
+        c = creaVector(a->n);
+        for(i = 0; i < a->n; i++) c->vec[i] = a->vec[i] * b->vec[i];
+        return c;
+    }
+    /* Caso 4: Dimensiones totalmente incompatibles (ej. 2D * 3D) */
+    else {
+        execerror("Dimensiones incompatibles", "en multiplicacion");
+        return NULL;
+    }
 }
-
 /* Se calcula el producto punto (escalar) y se encapsula el resultado en un vector unidimensional. */
 Vector *productoPunto(Vector *a, Vector *b) {
     Vector *c;
