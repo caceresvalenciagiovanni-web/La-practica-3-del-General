@@ -2,12 +2,14 @@
 
 #include "hoc.h"
 #include <math.h>
+#include <stdio.h>
 
 void yyerror (char *s);
 int yylex ();
 void warning(char *s, char *t);
 void execerror(char *s, char *t);
 void fpecatch();
+void init();
 extern double Pow(double, double);
 
 
@@ -27,7 +29,7 @@ extern double Pow(double, double);
 %left UNARYMINUS
 %right '^'
 
-%% /* A continuación las reglas gramaticales y las acciones */
+%% /* A continuaciÃ³n las reglas gramaticales y las acciones */
 list:   
 	| list '\n'
 	| list asgn '\n'
@@ -68,12 +70,13 @@ jmp_buf begin;
 char *progname;
 int lineno = 1;
 
-void main (int argc, char *argv[]){
+int main (int argc, char *argv[]){
 	progname=argv[0];
 	init();
 	setjmp(begin);
 	signal(SIGFPE, fpecatch);
   	yyparse ();
+    return 0;
 }
 
 void execerror(char *s, char *t){
