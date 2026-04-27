@@ -2,8 +2,7 @@
 #include "y.tab.h"
 #include <math.h>
 
-extern double   Log(), Log10(), Sqrt(), Exp( ) , integer ( ) ;
-
+/* Arreglo de constantes matemáticas */
 static struct {
     char *name;
     double cval;
@@ -16,21 +15,10 @@ static struct {
     0,       0
 };
 
-static struct {	/*	Predefinidos */
-char *name;
-double	(*func)(double);
-} builtins[] =	{
-"sin",	sin,
-"cos" ,	cos,
-"atan",	atan,
-"log", Log,
-"log10", Log10,
-"exp", Exp,
-"sqrt",	Sqrt,   /*	verifica rango */
-"int" ,	integer,
-"abs",	fabs,
-0,	0
-};
+/* Nota: En esta versión inicial, nos enfocaremos en las constantes. 
+   Las funciones built-ins (sin, cos, etc.) requieren que sus envoltorios 
+   en math.c sean actualizados para retornar un Vector* en lugar de un double.
+*/
 
 void init() {
     int i;
@@ -47,7 +35,6 @@ void init() {
         install(consts[i].name, VAR, v);
     }
 }
-
 
 
 
