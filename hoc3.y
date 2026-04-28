@@ -51,25 +51,16 @@ asgn:
     ;
 
 /* Regla de construcción dinámica: Agrupación de números en arreglos (ej. [1 2 3]). */
-/* Se define la construcción dinámica de vectores permitiendo expresiones separadas por comas. */
 vector_elements:
-      expr {
-          /* Se inicializa el vector copiando el resultado de la primera expresión evaluada. */
-          $$ = copiaVector($1);
+      NUMBER {
+          $$ = creaVector(1);
+          $$->vec[0] = $1;
       } 
-    | vector_elements ',' expr {
-          /* Se redimensiona el vector base para concatenar dinámicamente los elementos de la nueva expresión. */
-          int prev_n = $1->n;
-          int extra_n = $3->n;
-          int i;
-          
+    | vector_elements NUMBER {
           $$ = $1; 
-          $$->n = prev_n + extra_n;
+          $$->n = $$->n + 1;
           $$->vec = (double *)realloc($$->vec, sizeof(double) * $$->n);
-          
-          for(i = 0; i < extra_n; i++) {
-              $$->vec[prev_n + i] = $3->vec[i];
-          }
+          $$->vec[$$->n - 1] = $2;
       }
     ;
 
@@ -86,16 +77,26 @@ expr:
           $$ = copiaVector($1->u.vec);
       }
     | asgn { $$ = copiaVector($1); }
-    | BLTIN '(' expr ')' { 
-             /* Se ejecuta el puntero a la función almacenada en el símbolo pasándole el vector como argumento */
-             $$ = (*($1->u.ptr))($3); 
-      }
     | '[' vector_elements ']' { $$ = $2; }
     | expr '+' expr { $$ = sumaVector($1, $3); }
     | expr '-' expr { $$ = restaVector($1, $3); }
     | expr '*' expr { $$ = multiVector($1, $3); }
     | expr 'X' expr { $$ = productoCruz($1, $3); }
     | expr '@' expr { $$ = productoPunto($1, $3); }
+    | NUMBER '*' expr {
+          /* Multiplicación de un escalar por un vector (por la izquierda). */
+          int i;
+          Vector *temp = creaVector($3->n);
+          for(i = 0; i < $3->n; i++) temp->vec[i] = $1;
+          $$ = multiVector(temp, $3);
+      }
+    | expr '*' NUMBER %prec '*' {
+          /* Multiplicación de un vector por un escalar (por la derecha). */
+          int i; 
+          Vector *temp = creaVector($1->n);
+          for(i = 0; i < $1->n; i++) temp->vec[i] = $3;
+          $$ = multiVector($1, temp);
+      }
     | '|' expr '|' {
           /* Cálculo de magnitud (retorna un escalar empaquetado en un vector 1D). */
           double mag = magnitudVector($2);
@@ -126,9 +127,10 @@ int main (int argc, char *argv[]){
     progname = argv[0];
     
     printf("---------------------------------------------------------------------------\n");
-    printf("                [ , , ]  CALCULADORA VECTORIAL HOC3  [ , , ]\n");
+    printf("                           CALCULADORA VECTORIAL HOC3\n");
     printf("---------------------------------------------------------------------------\n");
     printf("Suma(+) Resta(-) Magnitud(| |) Prod.Cruz(X) Prod.Punto(@) Escalar(*)\n");
+    printf("Uso de Variables: var_nombre = [1 2 3]\n");
     printf("---------------------------------------------------------------------------\n");
     
     init();
