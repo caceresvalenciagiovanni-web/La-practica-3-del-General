@@ -1,6 +1,9 @@
 #include "hoc.h"
 #include "y.tab.h"
-#include <math.h>
+#include <stdio.h>
+
+/* Se importan las referencias de las funciones desde math.c */
+extern Vector *Sin(), *Cos(), *Atan(), *Log(), *Log10(), *Exp(), *Sqrt(), *Integer(), *Abs();
 
 /* Arreglo de constantes matemáticas */
 static struct {
@@ -15,10 +18,22 @@ static struct {
     0,       0
 };
 
-/* Nota: En esta versión inicial, nos enfocaremos en las constantes. 
-   Las funciones built-ins (sin, cos, etc.) requieren que sus envoltorios 
-   en math.c sean actualizados para retornar un Vector* en lugar de un double.
-*/
+/* Diccionario de funciones integradas (built-ins) asociadas a punteros de funciones vectoriales */
+static struct {
+    char *name;
+    Vector *(*func)(Vector *);
+} builtins[] = {
+    "sin",   Sin,
+    "cos",   Cos,
+    "atan",  Atan,
+    "log",   Log,
+    "log10", Log10,
+    "exp",   Exp,
+    "sqrt",  Sqrt,
+    "int",   Integer,
+    "abs",   Abs,
+    0,       0
+};
 
 void init() {
     int i;
@@ -27,20 +42,14 @@ void init() {
 
     /* Se instalan las constantes matemáticas en la tabla de símbolos */
     for (i = 0; consts[i].name; i++) {
-        /* Se crea un vector de dimensión 1 para contener el valor escalar */
         v = creaVector(1);
         v->vec[0] = consts[i].cval;
-        
-        /* Se instala en la tabla como una variable (VAR) inicializada */
         install(consts[i].name, VAR, v);
     }
+    
+    /* Se instalan las funciones integradas en la tabla de símbolos bajo el identificador BLTIN */
+    for (i = 0; builtins[i].name; i++) {
+        s = install(builtins[i].name, BLTIN, NULL);
+        s->u.ptr = builtins[i].func;
+    }
 }
-
-
-
-
-
-
-
-
-
