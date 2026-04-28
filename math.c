@@ -1,49 +1,82 @@
-#include  <math.h>
-#include  <errno.h>
+#include <math.h>
+#include <errno.h>
+#include "hoc.h"
 
-extern    int	errno;
+extern int errno;
 void execerror(char *s, char *t);
-double    errcheck();
 
-double  Log(double x)
-{
-	return errcheck(log(x), "log");
+/* Se evalúan los errores de dominio y rango de la librería matemática de C. */
+double errcheck(double d, char *s) {
+    if (errno == EDOM) {
+        errno = 0;
+        execerror(s, "argument out of domain");
+    } else if (errno == ERANGE) {
+        errno = 0;
+        execerror(s, "result out of range");
+    }
+    return d;
 }
 
-double  Log10(double x)
-{
-	return  errcheck(log10(x), "log10"); 
+/* Envoltorio genérico de broadcasting: Se aplica la función trigonométrica a cada componente del vector. */
+Vector *Sin(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(sin(x->vec[i]), "sin");
+    return res;
 }
 
-double  Exp(double x)
-{
-	return  errcheck(exp(x) , "exp"); 
-} 
-
-double  Sqrt(double x)
-{
-	return  errcheck(sqrt(x), "sqrt");
+Vector *Cos(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(cos(x->vec[i]), "cos");
+    return res;
 }
 
-double Pow(double x, double y)
-{
-	return errcheck(pow(x,y), "exponentiation");
+Vector *Atan(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(atan(x->vec[i]), "atan");
+    return res;
 }
 
-double integer(double x) 
-{
-	return (double)(long)x;
+Vector *Log(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(log(x->vec[i]), "log");
+    return res;
 }
 
-double errcheck(double d, char *s)   /* revisar el resultado de la llamada
-                                        a la biblioteca */
-{
-	if (errno == EDOM) {
-		errno = 0;
-		execerror(s, "argument out of donain"); 
-	} else if (errno == ERANGE) {
-		errno = 0;
-		execerror(s,"result out of range"); 
-        } 
-        return d;
+Vector *Log10(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(log10(x->vec[i]), "log10");
+    return res;
+}
+
+Vector *Exp(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(exp(x->vec[i]), "exp");
+    return res;
+}
+
+Vector *Sqrt(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = errcheck(sqrt(x->vec[i]), "sqrt");
+    return res;
+}
+
+Vector *Integer(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = (double)(long)(x->vec[i]);
+    return res;
+}
+
+Vector *Abs(Vector *x) {
+    int i;
+    Vector *res = creaVector(x->n);
+    for(i = 0; i < x->n; i++) res->vec[i] = fabs(x->vec[i]);
+    return res;
 }
