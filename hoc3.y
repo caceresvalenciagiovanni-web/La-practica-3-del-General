@@ -77,10 +77,6 @@ expr:
           $$ = copiaVector($1->u.vec);
       }
     | asgn { $$ = copiaVector($1); }
-    | BLTIN '(' expr ')' { 
-          /* Se ejecuta el puntero a la función almacenada en el símbolo pasándole el vector como argumento */
-          $$ = (*($1->u.ptr))($3); 
-      }
     | '[' vector_elements ']' { $$ = $2; }
     | expr '+' expr { $$ = sumaVector($1, $3); }
     | expr '-' expr { $$ = restaVector($1, $3); }
