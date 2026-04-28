@@ -51,16 +51,25 @@ asgn:
     ;
 
 /* Regla de construcción dinámica: Agrupación de números en arreglos (ej. [1 2 3]). */
+/* Se define la construcción dinámica de vectores permitiendo expresiones separadas por comas. */
 vector_elements:
-      NUMBER {
-          $$ = creaVector(1);
-          $$->vec[0] = $1;
+      expr {
+          /* Se inicializa el vector copiando el resultado de la primera expresión evaluada. */
+          $$ = copiaVector($1);
       } 
-    | vector_elements NUMBER {
+    | vector_elements ',' expr {
+          /* Se redimensiona el vector base para concatenar dinámicamente los elementos de la nueva expresión. */
+          int prev_n = $1->n;
+          int extra_n = $3->n;
+          int i;
+          
           $$ = $1; 
-          $$->n = $$->n + 1;
+          $$->n = prev_n + extra_n;
           $$->vec = (double *)realloc($$->vec, sizeof(double) * $$->n);
-          $$->vec[$$->n - 1] = $2;
+          
+          for(i = 0; i < extra_n; i++) {
+              $$->vec[prev_n + i] = $3->vec[i];
+          }
       }
     ;
 
@@ -117,10 +126,9 @@ int main (int argc, char *argv[]){
     progname = argv[0];
     
     printf("---------------------------------------------------------------------------\n");
-    printf("                           CALCULADORA VECTORIAL HOC3\n");
+    printf("                [ , , ]  CALCULADORA VECTORIAL HOC3  [ , , ]\n");
     printf("---------------------------------------------------------------------------\n");
     printf("Suma(+) Resta(-) Magnitud(| |) Prod.Cruz(X) Prod.Punto(@) Escalar(*)\n");
-    printf("Uso de Variables: var_nombre = [1 2 3]\n");
     printf("---------------------------------------------------------------------------\n");
     
     init();
